@@ -24,22 +24,16 @@ def dataframe(filename):
     """
     # Each column is a list stored as a value in this dict.
     result = defaultdict(list)
-    # breakpoint()
     for i, line in enumerate(lines(filename)):
-        # breakpoint()
         for key in line.keys():
             # This key has not been seen yet, so set it to None for all
             # previous lines.
             if key not in result:
-                # breakpoint()
                 result[key] = [None] * i
-        # breakpoint()
         # Ensure this row has some value for each column.
         for key in result.keys():
-            # breakpoint()
             result[key].append(line.get(key, None))
     send = pd.DataFrame(result)
-    # breakpoint()
     return send
 
 
@@ -47,10 +41,8 @@ def lines(filename):
     """Open an optionally gzipped GTF file and generate a dict for each line.
     """
     fn_open = gzip.open if filename.endswith('.gz') else open
-    # breakpoint()
     with fn_open(filename) as fh:
         for line in fh:
-            # breakpoint()
             if line.startswith('#'):
                 continue
             else:
@@ -63,9 +55,7 @@ def parse(line):
     result = {}
 
     fields = line.rstrip().split('\t')
-    # breakpoint()
     for i, col in enumerate(GTF_HEADER):
-        # breakpoint()
         result[col] = _get_value(fields[i])
 
     # INFO field consists of "key1=value;key2=value;...".
@@ -73,9 +63,7 @@ def parse(line):
     '''
     infos[7] = 'transcript_name "ABCB7-RA"' -> line 2 in abcb7.gtf
     '''
-    # breakpoint()
     for i, info in enumerate(infos, 1):
-        # breakpoint()
         # It should be key="value".
         try:
             key, _, value = re.split(R_KEYVALUE, info, 1)
@@ -112,7 +100,6 @@ def get_exon_ra_rb(transcript_name):
 
 if __name__ == '__main__':
     result = dataframe("abcb7.gtf")
-    # breakpoint()
     # print(result)
     '''
     result.transcript_name
@@ -124,7 +111,6 @@ if __name__ == '__main__':
     rb_exon = []
     exon_pos =[]
     for i, (f,t_n) in enumerate(zip(result.feature, result.transcript_name)):
-        # breakpoint()
         if f == 'exon':
             to_add = [int(result.start[i]),int(result.end[i])]
             exon_pos.append(to_add)
@@ -134,10 +120,7 @@ if __name__ == '__main__':
             else:
                 rb_exon.append((t_n, to_add))
             # ---------------
-            
-    # breakpoint()
-    # ra_exon = tuple(ra_exon)
-    # rb_exon = tuple(rb_exon)
+
     exon_pos = tuple(exon_pos)
     
     exon_plus_ra_rb = [exon_pos, ra_exon, rb_exon]

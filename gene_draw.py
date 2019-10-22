@@ -1,11 +1,9 @@
 import matplotlib.pyplot as plt
 
 
-
 class GeneImage(object):
     def __init__(self, gene_length, exon_intervals, exon_color="red", bar_color='gray', bg_color="white"):
         self.geneLength = gene_length
-        breakpoint()
         self.ra_exons = exon_intervals[1]
         self.rb_exons = exon_intervals[2]
 
@@ -13,18 +11,14 @@ class GeneImage(object):
         self.barColor= bar_color
         self.bgColor = bg_color
 
-        
         self.ylims = {'exon_max': 1, 'exon_min':0.5} # ori = 2 and 1
-        # self.figure, self.canvas = plt.subplots(figsize=(15,1.5)) # ori
         self.figure, self.canvas = plt.subplots(figsize=(13,4))
-        # self.figure2, self.canvas = plt.subplots(figsize=(10,1.5))
-
-        # breakpoint()
+        
         self.canvas.set_facecolor(self.bgColor)
         self._draw()
 
     def _set_limits(self):
-        self.ylims['bar_min'] = self.ylims['exon_max']+0.2 # ori 0.2
+        self.ylims['bar_min'] = self.ylims['exon_max']+0.2
         self.ylims['bar_max'] = self.ylims['bar_min']+(self.ylims['exon_max']-self.ylims['exon_min'])/5.0
         
     # fill the canvas with ra
@@ -51,7 +45,6 @@ class GeneImage(object):
         for i in range(len(self.rb_exons)):
             self._draw_rb_exons(self.rb_exons[i][1])
 
-        # breakpoint()
         # draw gene line 
         self.canvas.fill_between([self.geneLength[0], self.geneLength[1]],
                                   self.ylims['bar_min'], self.ylims['bar_max'],
