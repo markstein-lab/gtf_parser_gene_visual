@@ -1,5 +1,7 @@
 import gene_draw
 import numpy as np
+import sys
+
 """
 Read GFF/GTF files. Works with gzip compressed files and pandas.
     http://useast.ensembl.org/info/website/upload/gff.html
@@ -95,14 +97,16 @@ def _get_value(value):
     return value
 
 if __name__ == '__main__':
-    result = dataframe("abcb7.gtf")
+    # filename = 'abcb7.gtf'
+    filename = sys.argv[1]
+    result = dataframe(filename)
+    gene_name = filename.split('.')[0]
     # print(result)
     '''
     result.transcript_name
     '''
     gene_start = result.start[0]
     gene_end = result.end[0]
-    # for fields in result.iteritems():
     ra_exon = []
     rb_exon = []
     exon_pos =[]
@@ -110,16 +114,14 @@ if __name__ == '__main__':
     rb_start_stop_codon = []
 
     for i, (f,t_n) in enumerate(zip(result.feature, result.transcript_name)):
-        # breakpoint()
         if f == 'exon':
             to_add = [int(result.start[i]),int(result.end[i])]
             exon_pos.append(to_add)
-            # -----------------
             if t_n.endswith('RA'):
                 ra_exon.append((t_n, to_add))
             else:
                 rb_exon.append((t_n, to_add))
-            # ---------------
+                
         if f == 'start_codon' or f == 'stop_codon':
             if t_n.endswith('RA'):
                 to_add = [int(result.start[i]),int(result.end[i])]
@@ -128,7 +130,6 @@ if __name__ == '__main__':
                 to_add = [int(result.start[i]),int(result.end[i])]
                 rb_start_stop_codon.append((f, to_add))
 
-    # breakpoint()
     exon_pos = tuple(exon_pos)
     
     exon_plus_ra_rb = [exon_pos, ra_exon, rb_exon]
@@ -137,5 +138,5 @@ if __name__ == '__main__':
 
     # np.savetxt("parsed_data.txt", result.values, fmt='%s')
 
-    gene = gene_draw.GeneImage(geneLength,exon_plus_ra_rb, ra_start_stop_codon, rb_start_stop_codon)
+    gene = gene_draw.GeneImage(gene_name, geneLength,exon_plus_ra_rb, ra_start_stop_codon, rb_start_stop_codon)
     gene.show()
