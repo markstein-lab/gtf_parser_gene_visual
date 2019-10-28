@@ -94,10 +94,6 @@ def _get_value(value):
 
     return value
 
-def get_exon_ra_rb(transcript_name):
-    ra_or_rb = transcript_name.split('-')[1]
-    return ra_or_rb
-
 if __name__ == '__main__':
     result = dataframe("abcb7.gtf")
     # print(result)
@@ -110,17 +106,29 @@ if __name__ == '__main__':
     ra_exon = []
     rb_exon = []
     exon_pos =[]
+    ra_start_stop_codon = []
+    rb_start_stop_codon = []
+
     for i, (f,t_n) in enumerate(zip(result.feature, result.transcript_name)):
+        # breakpoint()
         if f == 'exon':
             to_add = [int(result.start[i]),int(result.end[i])]
             exon_pos.append(to_add)
             # -----------------
-            if get_exon_ra_rb(t_n) == 'RA':
+            if t_n.endswith('RA'):
                 ra_exon.append((t_n, to_add))
             else:
                 rb_exon.append((t_n, to_add))
             # ---------------
+        if f == 'start_codon' or f == 'stop_codon':
+            if t_n.endswith('RA'):
+                to_add = [int(result.start[i]),int(result.end[i])]
+                ra_start_stop_codon.append((f, to_add))
+            if t_n.endswith('RB'):
+                to_add = [int(result.start[i]),int(result.end[i])]
+                rb_start_stop_codon.append((f, to_add))
 
+    # breakpoint()
     exon_pos = tuple(exon_pos)
     
     exon_plus_ra_rb = [exon_pos, ra_exon, rb_exon]
@@ -129,5 +137,5 @@ if __name__ == '__main__':
 
     # np.savetxt("parsed_data.txt", result.values, fmt='%s')
 
-    gene = gene_draw.GeneImage(geneLength,exon_plus_ra_rb)
+    gene = gene_draw.GeneImage(geneLength,exon_plus_ra_rb, ra_start_stop_codon, rb_start_stop_codon)
     gene.show()
